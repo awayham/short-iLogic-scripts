@@ -1,0 +1,30 @@
+﻿Imports System.Windows.Forms
+Sub main
+
+	Dim oAssembly As Inventor.AssemblyDocument = ThisApplication.ActiveDocument
+	
+	oAssembly.ComponentDefinition.CreateFactory()
+	
+	Dim iFactory As Inventor.iAssemblyFactory = oAssembly.ComponentDefinition.iAssemblyFactory
+	
+    'table columns list
+    Dim oColumns As iAssemblyTableColumns = iFactory.TableColumns
+    'table rows list
+    Dim oRows As iAssemblyTableRows = iFactory.TableRows
+	
+    Dim oDefRow As iAssemblyTableRow = iFactory.DefaultRow
+    Dim oRow As iAssemblyTableRow = iFactory.DefaultRow
+
+    'MessageBox.Show(oRow.Item(1).Value, "Początkowy wiersz to: " & oRow.Item(2).Value)
+
+	Dim i As Integer
+	
+    'table cells' values
+    For i = 1 To oRows.Count
+        oRow = oRows.Item(i)
+        'MessageBox.Show(i, oRow.Item(1).Value)
+		iFactory.DefaultRow = oRow
+		InventorVb.DocumentUpdate()
+    Next
+    
+End Sub

@@ -1,0 +1,27 @@
+﻿'Reguła, która przedefinuje wszystke układy do globalnego
+
+Sub Main()
+	Dim oDoc As Document = ThisApplication.ActiveDocument
+	Dim oComp As ComponentOccurrence
+	MessageBox.Show("Wejscie", "Step")
+	Try
+		If oDoc.DocumentType = kAssemblyDocumentObject Then
+			Dim AssoDoc As AssemblyDocument
+			AssoDoc = oDoc
+			For Each oComp In AssoDoc.ComponentDefinition.Occurrences
+				Constraints.AddFlush("YZ-YZ: Base-" & oComp.Name, "", "YZ Plane", oComp.Name, "YZ Plane")
+				Constraints.AddFlush("XY-XY: Base-" & oComp.Name, "", "XY Plane", oComp.Name, "XY Plane")
+				Constraints.AddFlush("XZ-XZ: Base-" & oComp.Name, "", "XZ Plane", oComp.Name, "XZ Plane")
+				If MessageBox.Show("Component has been constrained: " & oComp.Name, "Step", MessageBoxButtons.OKCancel) = 2 Then
+					MessageBox.Show("Closing rule in component: " & oComp.Name, "Step")
+					Exit Sub
+				End If
+			Next
+		Else 
+			MessageBox.Show("This file is not a assembly file!", "Wrong file type!")
+		End If
+		MessageBox.Show("Opperation has been ended succefully.", "End")
+	Catch
+		MessageBox.Show("Something went wrong: " & oComp.Name, "Error")
+	End Try
+End Sub

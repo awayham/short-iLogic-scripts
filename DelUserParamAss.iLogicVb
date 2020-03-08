@@ -1,0 +1,19 @@
+﻿Sub Main()
+	Dim aDoc As Document = ThisApplication.ActiveDocument
+	Dim oPartDoc As Document
+
+	For Each oPartDoc In aDoc.AllReferencedDocuments
+		
+		oMyParameter = oPartDoc.ComponentDefinition.Parameters.UserParameters
+
+		For Each item In oMyParameter
+				If item.InUse() = False Then 
+					item.Delete()		
+				End If	
+				
+		Next
+
+		
+	Next
+	
+End Sub 

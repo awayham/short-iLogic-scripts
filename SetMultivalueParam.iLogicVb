@@ -1,0 +1,12 @@
+﻿NewParametr = 1.25
+
+Dim aDoc As Document = ThisApplication.ActiveDocument
+Dim oDoc As Document = aDoc
+Dim iProp As [Property]
+Dim Param As Parameter
+
+Dim oCustomPropertySet As PropertySet = oDoc.PropertySets.Item("Inventor User Defined Properties")
+Dim uParam As UserParameters = oDoc.ComponentDefinition.Parameters.UserParameters	
+uParam.AddByExpression("NewParametr", "1", "mm")
+MultiValue.SetList(“NewParametr”, 0.5, 0.75, 1.0, 1.25)
+NewParametr = InputListBox("Set value:", MultiValue.List("NewParametr"), NewParametr, Title := "Title", ListName := "Listparamteru nowego")

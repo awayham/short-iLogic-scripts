@@ -1,0 +1,29 @@
+﻿'check for custom iProperty and add it if not found
+Dim newName As String
+Dim oldprefix As String
+Dim newprefix As String
+customPropertySet = ThisDoc.Document.PropertySets.Item _
+("Inventor User Defined Properties")
+
+'check that this active document is a part file   
+Dim partDoc As PartDocument
+If ThisApplication.ActiveDocument.DocumentType <> kPartDocumentObject Then
+MessageBox.Show ("Please open a part document", "iLogic")
+End If
+
+'define the active document
+partDoc = ThisApplication.ActiveDocument
+Dim solid As SurfaceBody
+Dim i As Integer
+
+oldprefix = InputBox("Enter a oldprefix for the solid body", "iLogic")
+newprefix = InputBox("Enter a newprefix for the solid body", "iLogic", oldprefix)
+
+i = 1
+'rename all solid bodies incrementing suffix
+For Each solid In partDoc.ComponentDefinition.SurfaceBodies
+	newName = solid.Name
+	newName =newName.Replace(oldprefix, newprefix)
+	solid.Name = newName
+	i = i + 1
+Next

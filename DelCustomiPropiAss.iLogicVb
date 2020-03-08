@@ -1,0 +1,24 @@
+﻿
+Dim oDoc As Document = ThisApplication.ActiveDocument
+Dim oPart As Document
+
+For Each oPart In oDoc.AllReferencedDocuments
+	
+'	If oPart.DocumentType = kPartDocumentObject Then
+		
+		oCustomPropertySet = oPart.PropertySets.Item("Inventor User Defined Properties")
+		For Each oCustProp In oCustomPropertySet
+			Try
+				oCustProp.Delete 
+			Catch
+				MessageBox.Show("Parametr "& oCustProp.ToString & " is most likely used.", "Can not delete!")
+			End Try
+			
+		Next
+
+		
+'	End If
+	
+Next
+
+

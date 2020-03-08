@@ -1,0 +1,25 @@
+﻿Dim oDoc As Document = ThisApplication.ActiveDocument
+
+Dim oPart As Document
+
+For Each oPart In oDoc.AllReferencedDocuments
+	
+	If oPart.DocumentType = kPartDocumentObject Then
+		Dim value As Double = 13
+		
+		iProperties.Value(oPart.DisplayName, "Custom", "New_iProperty") = value
+		
+				
+'		[To not overwrite existing iProperty:
+'		Dim iPropCustom As PropertySet = oPart.PropertySets.Item("UserProperties")
+'		Dim iProp As [Property]
+'		Try
+'			iProp = iPropCustom.Add(value, "New Double Value")
+'		Catch
+'			MessageBox.Show("iProperty with this name already exist in file " & oPart.DisplayName, "Adding failed!")
+'		End Try
+'		]
+		
+	End If
+	
+Next

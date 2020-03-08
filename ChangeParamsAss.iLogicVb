@@ -1,0 +1,53 @@
+﻿Sub Main()
+	
+	Dim aDoc As Document = ThisApplication.ActiveDocument
+	Dim ParaName As String = "NewParam"
+	Dim ParaValue As String = "12 mm"
+	Dim uParam As UserParameters = aDoc.ComponentDefinition.Parameters.UserParameters
+	Dim oPartDoc As Document
+	
+	For Each oPartDoc In aDoc.AllReferencedDocuments
+		
+		change_param(oPartDoc, ParaName, ParaValue)
+		
+		If MessageBox.Show("Succesfully added parameter to " & aDoc.DisplayName, "Finish", MessageBoxButtons.OKCancel) = 2 Then
+			MessageBox.Show("Closing rule on component: " & aDoc.DisplayName, "Finish")
+			Exit Sub
+		End If	
+		
+	Next
+	
+End Sub 
+	
+	
+Sub change_param(odoc As Document, paraname As String, paravalue As String)
+
+		Dim uparam As UserParameters = odoc.componentdefinition.parameters.userparameters
+		Dim param As Parameter
+
+		Try
+			Try
+				If Parameter(odoc.DisplayName, paraname) = paravalue Then
+					MessageBox.Show("Parameter already exist in component " & odoc.DisplayName & " with this value.", "Exist")
+				Else
+					MessageBox.Show("Parameter already exist in component " & odoc.DisplayName & " with other value.", "Exist different")
+				End If 
+			Catch
+				Dim paravaluesplit As String() = paravalue.Split(New String() {" " }, 0)
+				Try
+					Dim tunit As String = paravaluesplit(1)
+					Dim tvalue As String = paravaluesplit(0)
+					uparam.AddByExpression(paraname, tvalue, tunit)
+				Catch 
+					uparam.AddByValue(paraname, paravalue, UnitsTypeEnum.kMeterLengthUnits) 
+				End Try
+				
+				MessageBox.Show("New parameter has been added to component " & odoc.DisplayName, "step")
+				
+			End Try
+		Catch
+			MessageBox.Show("Name: " & paraname & " is incorrect for component : " & odoc.DisplayName, "Error")
+		End Try
+
+		
+End Sub

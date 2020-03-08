@@ -1,0 +1,25 @@
+﻿Sub Main()
+	Value = 3.52
+	Dim aDoc As Document = ThisApplication.ActiveDocument
+	Dim oPartDoc As Document
+
+	For Each oPartDoc In aDoc.AllReferencedDocuments
+		
+		Try
+			If Parameter(oPartDoc.DisplayName, "NewParam") = Value Then
+				MessageBox.Show("Parameter already exist in component " & oPartDoc.DisplayName & " with this value.", "Step")
+			Else
+				MessageBox.Show("Parameter already exist in component " & oPartDoc.DisplayName & " with other value.", "Step")
+			End If 
+		Catch
+			oPartDoc.ComponentDefinition.Parameters.UserParameters.AddByExpression("NewParam", Value, kMillimeterLengthUnits )
+			
+			If MessageBox.Show("New parameter has been added to component " & oPartDoc.DisplayName, "Step", MessageBoxButtons.OKCancel) = 2 Then
+				MessageBox.Show("Closing rule on component: " & oPartDoc.DisplayName, "Step")
+				Exit Sub
+			End If
+		End Try
+		
+	Next
+	
+End Sub 

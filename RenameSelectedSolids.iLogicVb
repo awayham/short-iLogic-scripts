@@ -1,0 +1,36 @@
+﻿
+Dim newName As String
+customPropertySet = ThisDoc.Document.PropertySets.Item _
+("Inventor User Defined Properties")
+
+'check that this active document is a part file   
+Dim partDoc As PartDocument
+If ThisApplication.ActiveDocument.DocumentType <> kPartDocumentObject Then
+MessageBox.Show ("Please open a part document", "iLogic")
+End If
+
+'define the active document
+partDoc = ThisApplication.ActiveDocument
+Dim solid As SurfaceBody
+Dim solid2 As SurfaceBody
+Dim i As Integer
+
+While True
+	solid = ThisApplication.CommandManager.Pick(SelectionFilterEnum.kPartBodyFilter, "Select a solid") 
+	
+	solid.Visible = True
+	
+	
+	Try	
+		solid2 = ThisApplication.CommandManager.Pick(SelectionFilterEnum.kPartBodyFilter, "Select a solid")
+		newName = solid2.Name
+	Catch 
+		newName = solid.Name
+	End Try
+	
+	newName = InputBox("Enter a new name for the solid body", "iLogic", newName)
+	solid.Name = newName
+	i = i + 1
+	solid.Visible = False
+	
+End While

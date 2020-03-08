@@ -1,0 +1,103 @@
+===================---------------------Lista wilowartościowa do wyboru--------------------=================
+Dim oTypes_Array As New ArrayList 
+oTypes_Array.Add("Paint code")
+oTypes_Array.Add("Paint code 2")
+oTypes_Array.Add("PART COMMENTS")
+oTypes_Array.Add("Completion Date")
+oTypes_Array.Add("Exit")
+Dim oSelected As New ArrayList 
+
+While True 
+	oTypes_Selected = InputListBox("SELECT TYPE:", oTypes_Array, oTypes_Array(0), oRuleNo, X_oProp_Array)
+	If IsNothing (oTypes_Selected) Then Exit While 
+	oSelected.Add(oTypes_Selected)	
+End While 
+
+If oSelected.Count > 0 Then
+	For Each oText In oSelected 
+		MessageBox.Show(oText, "Selected items")
+	Next
+End If
+
+===================---------------------Aktywny projekt coś tam xD--------------------=================
+Dim app As Inventor.Application = ThisApplication
+Dim proj As DesignProject = app.DesignProjectManager.ActiveDesignProject
+Dim MyLibList As New ArrayList
+For Each myLib In proj.MaterialLibraries
+	MyLibList.Add(myLib.Name)
+Next
+MultiValue.List("Material_Lib") = MyLibList
+'MessageBox.Show(MyLibList.IndexOf(Material_Lib)+1, "Title")
+Dim LibIndex As Long
+For Each appLib In app.AssetLibraries
+	LibIndex = LibIndex + 1
+	If Replace(appLib.DisplayName, " ", "") = Material_Lib Then Exit For
+Next
+app.ActiveMaterialLibrary = app.AssetLibraries.Item(LibIndex)
+
+
+MultiValue.List("Material_Desc") = iProperties.Materials
+
+
+===================---------------------Coś tam auto dołączanie--------------------=================
+
+
+Dim app As Inventor.Application = ThisApplication
+Dim doc As DrawingDocument = app.ActiveDocument
+Dim newDoc As DrawingDocument
+'Dim model As AssemblyDocument = doc.ReferencedDocuments.Item(1)
+Dim factory As AssemblyDocument = doc.ReferencedDocuments.Item(1) 
+Dim member As iAssemblyTableCell
+Dim transMgr As TransactionManager = app.TransactionManager
+Dim compDef As AssemblyComponentDefinition = factory.ComponentDefinitions.Item(1)
+
+
+For Each member In compDef.iAssemblyMember.Row.Item()
+	Dim trans As Transaction = transMgr.StartTransaction(ThisDoc.Document, "UpdateTemplate")
+	NewFileName = member.Item(1).Value
+	docnamearr = New String() {NewFileName}
+	ActiveSheet.View("VIEW1").View.ActiveMemberName = NewFileName
+	doc.ActiveSheet.PartsLists.Item(1).MembersToInclude() = docnamearr
+	
+	Dim oCurrentSheet As Sheet = ThisDoc.Document.ActiveSheet
+	Dim oDwgViews As DrawingViews
+	oDwgViews = oCurrentSheet.DrawingViews
+		For Each oView In oDwgViews
+		        Do While oView.IsUpdateComplete = False
+		        ThisApplication.UserInterfaceManager.DoEvents
+		        ThisApplication.StatusBarText = "Updating drawing views..."
+		        Loop
+	    Next
+	Dim hSheet As Sheet
+	hSheet = ThisApplication.ActiveDocument.Sheets.Item(1)	
+	'Auto-Reattach Annotation
+	ThisApplication.CommandManager.ControlDefinitions.Item("DLxAnnoReconnectCmd").Execute
+	'Auto-Reattach Orphaned Annotations
+	ThisApplication.CommandManager.ControlDefinitions.Item("DLxAutoReattachSickAnnotationsCmd").Execute
+	doc.SaveAsInventorDWG(ThisDoc.Path & "\" & NewFileName & ".dwg", True)
+
+	trans.End
+	app.CommandManager.ControlDefinitions("appUndoCmd").Execute
+Next
+
+
+
+===================---------------------Coś tam --------------------=================
+
+
+If oDoc.ReferencingDocuments.Count = 0
+			oWrite = System.IO.File.AppendText(oTextSave)
+			oWrite.WriteLine(oStr)	
+			oWrite.Flush()
+			oWrite.Close
+		Else
+			For Each oRefDoc In oDoc.ReferencingDocuments
+				RecurReferencing(oRefDoc, oStr, Level + 1)
+			Next
+		End If
+
+
+
+
+
+

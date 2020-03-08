@@ -1,0 +1,37 @@
+﻿' the code from: https://forums.autodesk.com/t5/inventor-customization/highlight-part-with-ilogic/td-p/7340531
+
+Dim oDoc As AssemblyDocument
+oDoc = ThisApplication.ActiveDocument
+aDocName = oDoc.DisplayName
+
+Dim oSelections As New ArrayList
+oPart = "Part"
+
+Dim oSet1 As Inventor.HighlightSet
+oSet1 = oDoc.CreateHighlightSet
+oSet1.Clear
+
+Dim oEntities As ObjectCollection
+oEntities = ThisApplication.TransientObjects.CreateObjectCollection
+
+While True
+	oEntity = ThisApplication.CommandManager.Pick(kAssemblyLeafOccurrenceFilter, aDocName & ": Select Part:")
+	If IsNothing(oEntity) Then Exit While
+	oSet1.AddItem(oEntity)
+	oEntities.Add(oEntity) 
+End While
+
+i = 1
+For Each oEntity In oSet1
+	Dim oOccurrence As ComponentOccurrence
+	oOccurrence = oEntity
+	oDoc_Entity = oOccurrence.Definition.Document
+	
+	MessageBox.Show(vbLf & oDoc_Entity.DisplayName _
+	& vbLf & vbLf & oDoc_Entity.FullFileName, oEntities.Item(i).name)
+	
+	oSet1.Remove(1)
+	i += 1
+Next 
+
+oSet1.Clear
